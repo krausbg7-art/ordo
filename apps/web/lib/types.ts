@@ -40,3 +40,30 @@ export interface UserOut {
   id: string;
   email: string;
 }
+
+export type FileProcessingStatus = "queued" | "processing" | "done" | "error" | "unsupported";
+
+export interface FileOut {
+  id: string;
+  filename: string;
+  content_type: string;
+  size: number;
+  status: FileProcessingStatus;
+  error: string | null;
+  created_at: string;
+}
+
+export type SuggestionStatus = "pending" | "accepted" | "rejected";
+
+export interface TaskSuggestionOut {
+  id: string;
+  file_id: string | null;
+  title: string;
+  due_date: string | null;
+  priority: 1 | 2 | 3;
+  person: string | null;
+  quote: string;
+  status: SuggestionStatus;
+  dedup_of_task_id: string | null;
+  created_at: string;
+}

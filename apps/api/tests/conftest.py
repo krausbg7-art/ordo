@@ -5,6 +5,7 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+from ordo_api.core.storage import InMemoryStorage, get_storage_dependency
 from ordo_api.db import Base, get_db
 from ordo_api.main import create_app
 
@@ -29,6 +30,11 @@ async def client(db_engine):
     app = create_app()
     app.dependency_overrides[get_db] = override_get_db
 
+    storage = InMemoryStorage()
+    app.dependency_overrides[get_storage_dependency] = lambda: storage
+
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        ac.storage = storage
+        ac.job_queue = app.state.job_queue
         yield ac

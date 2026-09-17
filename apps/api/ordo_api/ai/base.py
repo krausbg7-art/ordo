@@ -4,7 +4,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-ChatMessage = dict[str, str]
+ChatMessage = dict[str, Any]
 
 
 @dataclass

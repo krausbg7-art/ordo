@@ -2,30 +2,37 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
 
 from .config import get_settings
+from .core.limiter import limiter
 from .core.logging import configure_logging, get_logger
-from .routers import auth, boards, health, tasks, today
+from .core.queue import InMemoryJobQueue, create_arq_job_queue
+from .routers import auth, boards, files, health, suggestions, tasks, today
 
 settings = get_settings()
 configure_logging(settings.ENV)
 logger = get_logger(__name__)
 
-limiter = Limiter(key_func=get_remote_address)
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("ordo_api.startup", env=settings.ENV)
+    try:
+        app.state.job_queue = await create_arq_job_queue(settings.REDIS_URL)
+    except Exception as exc:  # noqa: BLE001 — Redis может быть недоступен вне docker compose
+        logger.warning("ordo_api.job_queue_unavailable", error=str(exc))
     yield
     logger.info("ordo_api.shutdown")
 
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Ordo API", version="0.1.0", lifespan=lifespan)
+
+    # Заменяется реальной очередью на Redis в lifespan; в тестах остаётся
+    # заглушкой, так как ASGI-транспорт в тестах не запускает lifespan.
+    app.state.job_queue = InMemoryJobQueue()
 
     app.state.limiter = limiter
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
@@ -43,6 +50,8 @@ def create_app() -> FastAPI:
     app.include_router(boards.router)
     app.include_router(tasks.router)
     app.include_router(today.router)
+    app.include_router(files.router)
+    app.include_router(suggestions.router)
 
     return app
 

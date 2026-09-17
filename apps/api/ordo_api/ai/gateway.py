@@ -129,6 +129,20 @@ class AiGateway:
         assert result is not None
         return result
 
+    async def embed(self, texts: list[str], *, contains_user_data: bool = True) -> list[list[float]]:
+        if contains_user_data and self.data_residency == "ru":
+            if "selfhost" not in self.providers:
+                raise ResidencyViolation(
+                    "DATA_RESIDENCY=ru требует настроенного SELFHOST_BASE_URL для эмбеддингов "
+                    "пользовательских данных; облачные провайдеры запрещены"
+                )
+            provider = self.providers["selfhost"]
+        else:
+            provider = self.providers.get("qwen") or self.providers.get("selfhost")
+            if provider is None:
+                raise ValueError("Нет доступного провайдера эмбеддингов")
+        return await provider.embed(texts)
+
     async def _call_with_schema_retry(
         self,
         provider: LLMProvider,
