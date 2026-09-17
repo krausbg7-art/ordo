@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ivory: #f4f1ea;
+  --linen: #eae5da;
+  --paper: #fbfaf6;
+  --line: #e2dccf;
+  --line2: #d9d2c3;
+  --stone: #6b665d;
+  --soft: #4a463f;
+  --ink: #1c1b19;
+  --brass: #a8844e;
+  --brass-ink: #7a5f33;
+}
+
+body {
+  background: var(--ivory);
+  color: var(--ink);
+  font-family: "Manrope", "Helvetica Neue", Helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3,
+.serif {
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+}
+
+.card-shadow {
+  box-shadow: 0 1px 0 var(--line2);
+}

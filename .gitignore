@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+apps/web/.env*.local
+*.tsbuildinfo
+apps/web/test-results/
+apps/web/playwright-report/
+apps/web/blob-report/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+# Docker volumes
+pgdata/
+miniodata/
+
+# Logs
+*.log

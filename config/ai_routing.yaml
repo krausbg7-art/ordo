@@ -1,0 +1,31 @@
+# Маршрутизация задач ИИ-шлюза: task_type -> провайдер (+fallback).
+# Провайдер "selfhost" — единственный разрешённый при DATA_RESIDENCY=ru
+# для запросов, содержащих пользовательские данные.
+
+routes:
+  extract_tasks_short:
+    provider: qwen
+    fallback: kimi
+    max_completion_tokens: 1500
+
+  extract_tasks_long:
+    # длинные документы (> ~30 000 символов)
+    provider: kimi
+    fallback: qwen
+    max_completion_tokens: 2000
+    long_input_threshold_chars: 30000
+
+  vision_ocr:
+    provider: qwen_vl
+    fallback: kimi
+    max_completion_tokens: 2000
+
+  draft_reply:
+    provider: qwen
+    fallback: kimi
+    max_completion_tokens: 800
+
+  summary:
+    provider: kimi
+    fallback: qwen
+    max_completion_tokens: 800
