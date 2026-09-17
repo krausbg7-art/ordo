@@ -23,9 +23,10 @@ async def ocr_image(gateway: AiGateway, content: bytes, user_id: uuid.UUID, mime
 
 def convert_heic_to_png(content: bytes) -> bytes | None:
     try:
+        from io import BytesIO
+
         import pillow_heif
         from PIL import Image
-        from io import BytesIO
 
         pillow_heif.register_heif_opener()
         image = Image.open(BytesIO(content))

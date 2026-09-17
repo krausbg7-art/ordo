@@ -4,7 +4,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from sqlalchemy import func, or_, select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..ai.gateway import AiGateway

@@ -5,6 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..auth.deps import get_current_user
 from ..auth.security import create_access_token, hash_password, verify_password
 from ..config import get_settings
+from ..core.account import delete_user_account
+from ..core.storage import ObjectStorage, get_storage_dependency
 from ..db import get_db
 from ..models.board import DEFAULT_STATUSES, Board, Status
 from ..models.user import User
@@ -70,3 +72,14 @@ async def logout(response: Response):
 @router.get("/me", response_model=UserOut)
 async def me(user: User = Depends(get_current_user)):
     return user
+
+
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_me(
+    response: Response,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    storage: ObjectStorage = Depends(get_storage_dependency),
+):
+    await delete_user_account(db, storage, user)
+    response.delete_cookie(settings.COOKIE_NAME, path="/")

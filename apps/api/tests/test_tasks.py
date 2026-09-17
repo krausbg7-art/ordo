@@ -27,7 +27,7 @@ async def test_create_and_list_tasks(client):
 
 @pytest.mark.asyncio
 async def test_update_and_delete_task(client):
-    board = await _register_and_get_board(client, "update@example.com")
+    await _register_and_get_board(client, "update@example.com")
     task = (await client.post("/tasks", json={"title": "Черновик"})).json()
 
     resp = await client.patch(f"/tasks/{task['id']}", json={"title": "Готовый черновик", "priority": 1})
@@ -47,9 +47,9 @@ async def test_move_task_reorders_transactionally(client):
     board = await _register_and_get_board(client, "move@example.com")
     inbox, in_progress = board["statuses"][0], board["statuses"][1]
 
-    t1 = (await client.post("/tasks", json={"title": "A"})).json()
+    await client.post("/tasks", json={"title": "A"})
     t2 = (await client.post("/tasks", json={"title": "B"})).json()
-    t3 = (await client.post("/tasks", json={"title": "C", "status_id": in_progress["id"]})).json()
+    await client.post("/tasks", json={"title": "C", "status_id": in_progress["id"]})
 
     resp = await client.post(f"/tasks/{t2['id']}/move", json={"status_id": in_progress["id"], "position": 0})
     assert resp.status_code == 200

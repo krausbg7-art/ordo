@@ -73,9 +73,7 @@ async def test_event_to_task_creates_task_in_inbox(client):
 @pytest.mark.asyncio
 async def test_add_all_events_as_tasks(client):
     await _register(client, "addall@example.com")
-    account_events = (
-        await client.post("/calendars/ics-import", files={"file": ("v.ics", io.BytesIO(ICS_CONTENT), "text/calendar")})
-    ).json()
+    await client.post("/calendars/ics-import", files={"file": ("v.ics", io.BytesIO(ICS_CONTENT), "text/calendar")})
 
     calendars = (await client.get("/calendars")).json()
     account_id = calendars[0]["id"]

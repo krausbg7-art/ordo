@@ -4,8 +4,6 @@ import pytest
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from ordo_api.models.search import SearchClick
-
 
 async def _register(client, email="search@example.com"):
     return await client.post("/auth/register", json={"email": email, "password": "supersecret123"})
@@ -48,8 +46,7 @@ async def test_search_finds_file_by_name(client):
 
 @pytest.mark.asyncio
 async def test_search_finds_file_by_chunk_content(client, db_engine):
-    resp = await _register(client, "content-search@example.com")
-    user_id = resp.json()["id"]
+    await _register(client, "content-search@example.com")
 
     eml_bytes = b"From: a@example.com\nTo: b@example.com\nSubject: T\n\nBody\n"
     uploaded = (
@@ -108,7 +105,7 @@ async def test_search_is_isolated_per_user(client):
 async def test_click_boosts_ranking(client, db_engine):
     await _register(client, "ranking@example.com")
     older = (await client.post("/tasks", json={"title": "Отчёт о продажах прошлый"})).json()
-    newer = (await client.post("/tasks", json={"title": "Отчёт о продажах новый"})).json()
+    await client.post("/tasks", json={"title": "Отчёт о продажах новый"})
 
     # искусственно делаем "older" старше, чтобы давность не решала исход
     session_maker = async_sessionmaker(db_engine, expire_on_commit=False)

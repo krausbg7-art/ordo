@@ -13,6 +13,9 @@ node_modules/
 out/
 apps/web/.env*.local
 *.tsbuildinfo
+apps/web/test-results/
+apps/web/playwright-report/
+apps/web/blob-report/
 
 # Env
 .env

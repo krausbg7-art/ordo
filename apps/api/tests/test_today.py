@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta, timezone
 
 import pytest
-from sqlalchemy import select, update
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from ordo_api.models.task import Task
@@ -17,7 +17,7 @@ async def test_today_prioritizes_overdue_then_priority(client):
         )
     ).json()
     high_priority = (await client.post("/tasks", json={"title": "Важное", "priority": 1})).json()
-    low_priority = (await client.post("/tasks", json={"title": "Неважное", "priority": 3})).json()
+    await client.post("/tasks", json={"title": "Неважное", "priority": 3})
 
     resp = await client.get("/today")
     assert resp.status_code == 200

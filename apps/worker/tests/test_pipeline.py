@@ -1,6 +1,5 @@
 import json
 import uuid
-from datetime import date
 
 import pytest
 from ordo_api.ai.base import ChatResult

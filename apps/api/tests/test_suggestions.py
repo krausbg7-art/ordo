@@ -1,8 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from ordo_api.models.task import SuggestionStatus, TaskSuggestion
-from ordo_api.models.user import User
+from ordo_api.models.task import TaskSuggestion
 
 
 async def _insert_suggestion(db_engine, user_id, **overrides):

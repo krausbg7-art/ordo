@@ -1,6 +1,5 @@
 from ordo_api.core.filetype import detect_kind
 
-from ordo_worker.extractors.docx import extract_docx_text
 from ordo_worker.extractors.email_ import extract_eml
 from ordo_worker.extractors.ics import parse_ics_events
 from ordo_worker.extractors.pdf import extract_pdf_text

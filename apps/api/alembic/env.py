@@ -1,10 +1,10 @@
 import asyncio
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+from alembic import context
 from ordo_api.config import get_settings
 from ordo_api.db import Base
 from ordo_api.models import *  # noqa: F401,F403  ensures all models are registered

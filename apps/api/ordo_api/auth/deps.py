@@ -1,5 +1,3 @@
-import uuid
-
 from fastapi import Cookie, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
