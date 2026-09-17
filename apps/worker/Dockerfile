@@ -12,6 +12,7 @@ WORKDIR /app
 
 COPY apps/api /app/api
 COPY apps/worker /app/worker
+COPY config /app/worker/config
 
 RUN pip install --no-cache-dir -e "/app/api[dev]" \
     && pip install --no-cache-dir -e "/app/worker[dev]"
