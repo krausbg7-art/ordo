@@ -45,4 +45,9 @@ export const api = {
     for (const file of files) form.append("files", file);
     return request<T>(path, { method: "POST", body: form });
   },
+  uploadField: <T>(path: string, field: string, file: File) => {
+    const form = new FormData();
+    form.append(field, file);
+    return request<T>(path, { method: "POST", body: form });
+  },
 };

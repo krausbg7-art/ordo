@@ -67,3 +67,25 @@ export interface TaskSuggestionOut {
   dedup_of_task_id: string | null;
   created_at: string;
 }
+
+export type CalendarKind = "ics" | "caldav" | "google";
+
+export interface CalendarAccountOut {
+  id: string;
+  kind: CalendarKind;
+  name: string;
+  url: string | null;
+  username: string | null;
+  enabled: boolean;
+  last_synced_at: string | null;
+}
+
+export interface CalendarEventOut {
+  id: string;
+  uid: string;
+  title: string;
+  start_at: string;
+  end_at: string | null;
+  description: string | null;
+  location: string | null;
+}

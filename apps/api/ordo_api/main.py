@@ -9,7 +9,7 @@ from .config import get_settings
 from .core.limiter import limiter
 from .core.logging import configure_logging, get_logger
 from .core.queue import InMemoryJobQueue, create_arq_job_queue
-from .routers import auth, boards, files, health, suggestions, tasks, today
+from .routers import auth, boards, calendars, files, health, suggestions, tasks, today
 
 settings = get_settings()
 configure_logging(settings.ENV)
@@ -52,6 +52,7 @@ def create_app() -> FastAPI:
     app.include_router(today.router)
     app.include_router(files.router)
     app.include_router(suggestions.router)
+    app.include_router(calendars.router)
 
     return app
 
