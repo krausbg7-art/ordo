@@ -12,6 +12,7 @@ node_modules/
 .next/
 out/
 apps/web/.env*.local
+*.tsbuildinfo
 
 # Env
 .env
