@@ -8,7 +8,7 @@ from slowapi.util import get_remote_address
 
 from .config import get_settings
 from .core.logging import configure_logging, get_logger
-from .routers import auth, health
+from .routers import auth, boards, health, tasks, today
 
 settings = get_settings()
 configure_logging(settings.ENV)
@@ -40,6 +40,9 @@ def create_app() -> FastAPI:
 
     app.include_router(health.router)
     app.include_router(auth.router)
+    app.include_router(boards.router)
+    app.include_router(tasks.router)
+    app.include_router(today.router)
 
     return app
 

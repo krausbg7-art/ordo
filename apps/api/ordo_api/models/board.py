@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..db import Base
 from .types import GUID
@@ -24,6 +24,8 @@ class Board(Base):
     name: Mapped[str] = mapped_column(String(200), default="Моя доска")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+    statuses: Mapped[list["Status"]] = relationship(back_populates="board", cascade="all, delete-orphan")
+
 
 class Status(Base):
     __tablename__ = "statuses"
@@ -33,3 +35,5 @@ class Status(Base):
     name: Mapped[str] = mapped_column(String(200))
     order: Mapped[int] = mapped_column(Integer, default=0)
     color: Mapped[str] = mapped_column(String(20), default="#6B665D")
+
+    board: Mapped["Board"] = relationship(back_populates="statuses")
