@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AppShell from "@/components/AppShell";
+import SearchBar from "@/components/SearchBar";
 import { useAuth } from "@/lib/useAuth";
 import { api } from "@/lib/api";
 import type { TodayTask } from "@/lib/types";
@@ -29,6 +30,10 @@ export default function TodayPage() {
 
   return (
     <AppShell>
+      <div className="mb-8">
+        <SearchBar />
+      </div>
+
       <h1 className="serif text-4xl mb-1">Сегодня</h1>
       <p className="text-[var(--stone)] mb-8">
         {new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })}

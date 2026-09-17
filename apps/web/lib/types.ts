@@ -89,3 +89,18 @@ export interface CalendarEventOut {
   description: string | null;
   location: string | null;
 }
+
+export type SearchResultType = "task" | "file" | "event" | "person";
+
+export interface SearchResultOut {
+  type: SearchResultType;
+  id: string;
+  title: string;
+  subtitle: string | null;
+  score: number;
+}
+
+export interface SearchResponse {
+  query: string;
+  results: SearchResultOut[];
+}
