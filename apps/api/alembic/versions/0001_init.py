@@ -47,18 +47,15 @@ def upgrade() -> None:
         sa.Column("color", sa.String(20), server_default="#6B665D"),
     )
 
+    # Типы ENUM создаются автоматически Alembic'ом при первом создании
+    # таблицы, использующей соответствующую колонку — явно их создавать
+    # не нужно (иначе CREATE TYPE выполнится дважды и упадёт с
+    # DuplicateObjectError).
     source_type_enum = postgresql.ENUM("mail", "calendar", "file", "call", "note", "manual", name="sourcetype")
     created_by_enum = postgresql.ENUM("user", "ai", name="createdby")
     suggestion_status_enum = postgresql.ENUM("pending", "accepted", "rejected", name="suggestionstatus")
     file_status_enum = postgresql.ENUM("queued", "processing", "done", "error", "unsupported", name="filestatus")
     calendar_kind_enum = postgresql.ENUM("ics", "caldav", "google", name="calendarkind")
-
-    bind = op.get_bind()
-    source_type_enum.create(bind, checkfirst=True)
-    created_by_enum.create(bind, checkfirst=True)
-    suggestion_status_enum.create(bind, checkfirst=True)
-    file_status_enum.create(bind, checkfirst=True)
-    calendar_kind_enum.create(bind, checkfirst=True)
 
     op.create_table(
         "tasks",
