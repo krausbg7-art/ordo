@@ -161,6 +161,11 @@ export default function CalendarsPage() {
             </div>
           )}
 
+          <div className="flex items-center gap-2 text-xs text-[var(--stone)] mb-4">
+            <span className="px-2 py-0.5 rounded-full bg-[var(--linen)]">скоро</span>
+            <span>Обратная синхронизация — срок задачи будет переносить событие в календарь (TODO)</span>
+          </div>
+
           {events.length === 0 ? (
             <p className="text-[var(--stone)]">Событий пока нет.</p>
           ) : (
