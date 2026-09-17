@@ -14,6 +14,14 @@ class Settings(BaseSettings):
     COOKIE_NAME: str = "ordo_session"
     COOKIE_SECURE: bool = False
 
+    # Домен(ы) веба, которым разрешён CORS с credentials; через запятую
+    # для нескольких (например, "https://ordo.example.com,https://www.ordo.example.com").
+    WEB_ORIGIN: str = "http://localhost:3000"
+
+    @property
+    def WEB_ORIGINS(self) -> list[str]:
+        return [origin.strip() for origin in self.WEB_ORIGIN.split(",") if origin.strip()]
+
     DATABASE_URL: str = "postgresql+asyncpg://ordo:ordo@localhost:5432/ordo"
     REDIS_URL: str = "redis://localhost:6379/0"
 

@@ -38,6 +38,77 @@ docker compose up --build
 работе», «Ждёт ответа», «На согласовании», «Готово»), поиском, разделами
 «Задачи», «Файлы» и «Календари».
 
+## Развёртывание в продакшене (сервер + домен + TLS)
+
+Чтобы сайт был виден в интернете, а не только на `localhost`:
+
+1. **Арендуйте сервер (VPS).** Достаточно 2 vCPU / 4 ГБ RAM с Ubuntu 22.04+
+   у любого провайдера (для соответствия резидентности данных — у
+   российского: Selectel, VK Cloud, Timeweb Cloud и т.п.). Запишите
+   публичный IP сервера.
+
+2. **Купите домен** и создайте в его DNS две A-записи, указывающие на IP
+   сервера:
+   - `ordo.example.com` → IP сервера (сам сайт)
+   - `api.ordo.example.com` → IP сервера (API; отдельный поддомен —
+     так Caddy сам и раздельно выпускает TLS-сертификат на каждый)
+
+   Подождите 5–30 минут, пока DNS обновится (`dig ordo.example.com` должен
+   вернуть ваш IP).
+
+3. **Установите Docker на сервере:**
+   ```bash
+   ssh root@<IP-сервера>
+   curl -fsSL https://get.docker.com | sh
+   ```
+
+4. **Склонируйте репозиторий на сервере:**
+   ```bash
+   git clone https://github.com/krausbg7-art/ordo.git
+   cd ordo
+   git checkout claude/task-from-file-349nvq   # или main, если уже смёржено
+   ```
+
+5. **Настройте `.env`:**
+   ```bash
+   cp .env.example .env
+   nano .env
+   ```
+   Обязательно поменяйте:
+   - `SECRET_KEY` — сгенерируйте случайную строку: `openssl rand -hex 32`
+   - `COOKIE_SECURE=true`
+   - `WEB_ORIGIN=https://ordo.example.com`
+   - `NEXT_PUBLIC_API_URL=https://api.ordo.example.com`
+   - `WEB_DOMAIN=ordo.example.com`
+   - `API_DOMAIN=api.ordo.example.com`
+   - Пароли `POSTGRES_PASSWORD`, `S3_ACCESS_KEY`/`S3_SECRET_KEY` — на свои
+   - Ключи ИИ (`MOONSHOT_API_KEY`/`DASHSCOPE_API_KEY`) или `SELFHOST_BASE_URL`
+     — иначе задачи из файлов не будут извлекаться (см. раздел про ИИ выше)
+
+6. **Запустите с продакшен-надстройкой** (добавляет Caddy — reverse-proxy
+   с автоматическим бесплатным TLS от Let's Encrypt, см.
+   [`docker-compose.prod.yml`](./docker-compose.prod.yml) и
+   [`Caddyfile`](./Caddyfile)):
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+   ```
+   Caddy сам получит и продлит сертификаты — ничего вручную настраивать
+   не нужно, важно только чтобы порты 80 и 443 сервера были открыты
+   (по умолчанию так и есть) и DNS уже указывал на сервер.
+
+7. **Проверьте:** откройте `https://ordo.example.com` — должна открыться
+   страница входа с валидным замочком браузера. `https://api.ordo.example.com/healthz`
+   должен вернуть `{"status":"ok"}`.
+
+8. **Дальше:** `docker compose -f docker-compose.yml -f docker-compose.prod.yml logs -f`
+   — смотреть логи; `... down` — остановить; после `git pull` —
+   `... up -d --build` повторно, чтобы применить изменения (миграции
+   применяются автоматически через сервис `migrate`).
+
+Все остальные порты (Postgres, Redis, MinIO, а также сами `api`/`web` без
+Caddy) в `docker-compose.yml` привязаны к `127.0.0.1`, то есть наружу не
+торчат — снаружи виден только Caddy на 80/443.
+
 ## Возможности по этапам
 
 1. **Основа** — регистрация/вход (argon2 + JWT в httpOnly cookie), полная

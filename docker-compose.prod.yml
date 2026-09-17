@@ -1,0 +1,29 @@
+# Продакшен-надстройка поверх docker-compose.yml: добавляет Caddy как
+# reverse-proxy с автоматическим TLS (Let's Encrypt) перед api и web.
+#
+# Запуск:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Требуется в .env: WEB_DOMAIN и API_DOMAIN — домены, которые уже
+# указывают A-записью на IP этого сервера (например,
+# ordo.example.com и api.ordo.example.com).
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+      - web
+
+volumes:
+  caddy_data:
+  caddy_config:
